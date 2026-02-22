@@ -3,128 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文言文复习助手 - 颜色保留版 (Rich Text Version)</title>
+    <title>文言文复习助手 - 宽敞全屏版</title>
     <style>
         :root {
-            --primary-color: #3498db;
-            --primary-hover: #2980b9;
-            --reset-color: #e74c3c;
-            --reset-hover: #c0392b;
-            --bg-color: #f4f7f6;
-            --text-color: #333;
-            --blank-bg: #e1f0fa;
-            --blank-text: #0056b3;
+            --theme-bg: #f1f5f9;           
+            --theme-card: #ffffff;         
+            --theme-text-main: #334155;    
+            --theme-text-muted: #64748b;   
+            
+            --theme-btn: #475569;          
+            --theme-btn-shadow: #1e293b;   
+            --theme-btn-hover: #64748b;    
+            
+            --theme-keyword: #064e3b;      
+            --theme-highlight-bg: #ecfdf5; 
+            --theme-highlight-text: #065f46;
+            
+            --theme-blank-bg: #f8fafc;     
+            --hint-color: #6cd5e5;         
+            --answer-color: #3c9ecc;       
+        }
+
+        /* Full Screen Setup */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; 
         }
 
         body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.8;
-            margin: 0;
-            padding: 40px 20px;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--theme-bg);
+            color: var(--theme-text-main);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
         }
 
+        /* Increased spacing to make the upper part feel less squeezed */
         .container {
-            width: 100%;
-            max-width: 800px;
-            background: #ffffff;
-            padding: 30px 40px;
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            background: var(--theme-card);
+            margin: 20px 30px; /* More breathing room around the edges */
+            padding: 35px 45px; /* Larger inner padding */
             border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
+            box-sizing: border-box;
         }
 
         h1 {
             text-align: center;
-            color: #2c3e50;
-            margin-top: 0;
+            color: var(--theme-text-main);
+            margin: 0 0 20px 0; /* More space below the title */
             font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: 2px;
         }
 
         .instructions {
-            background: #f8f9fa;
-            padding: 15px 20px;
-            border-left: 4px solid var(--primary-color);
-            border-radius: 4px;
-            font-size: 0.95em;
-            color: #555;
-            margin-bottom: 25px;
+            background: #e2e8f0; 
+            padding: 15px 25px; /* Taller instruction box */
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: var(--theme-text-main);
+            margin-bottom: 25px; /* More space below instructions */
+            text-align: center;
+            line-height: 1.6;
         }
 
         .button-group {
             display: flex;
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
+        /* New sub-row for the global state buttons */
+        .sub-button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px; /* Space before the text editor */
+        }
+
+        /* --- Main 3D Buttons --- */
         button {
             flex: 1;
             padding: 12px 20px;
-            background: var(--primary-color);
-            color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px; 
             font-size: 1.05em;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        button:hover { background: var(--primary-hover); }
-        
-        #resetBtn { background: var(--reset-color); }
-        #resetBtn:hover { background: var(--reset-hover); }
-
-        .content-box {
-            min-height: 300px;
-            padding: 25px;
-            background: #fff;
-            border: 2px dashed #3498db;
-            border-radius: 8px;
-            white-space: pre-wrap; /* Keeps Word line breaks */
-            font-size: 1.15em;
-            color: #2c3e50;
-            transition: border-color 0.3s;
-            outline: none;
-        }
-
-        .content-box:focus {
-            border-color: #2980b9;
-            background: #fafcfd;
-        }
-
-        /* Shows a placeholder when the div is empty */
-        .content-box:empty:before {
-            content: "请在此处按 Ctrl+V (或 Cmd+V) 粘贴您的带有颜色的Word文档内容...";
-            color: #999;
-            pointer-events: none;
-            display: block;
-        }
-
-        /* Styling for the clickable blanks */
-        .blank-btn {
-            color: var(--blank-text);
-            cursor: pointer;
             font-weight: 600;
-            background: var(--blank-bg);
-            padding: 0 4px; /* Reduced padding for a tighter fit */
-            margin: 0;      /* Removed margin to hug the parentheses */
+            cursor: pointer;
+            background: var(--theme-btn);
+            color: #fff;
+            box-shadow: 0 4px 0 var(--theme-btn-shadow);
+            transform: translateY(0);
+            transition: all 0.1s;
+        }
+
+        button:hover:not(:disabled) { background: var(--theme-btn-hover); }
+
+        button:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--theme-btn-shadow);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--theme-btn-shadow);
+            cursor: not-allowed;
+        }
+
+        #resetBtn {
+            background: #cbd5e1;
+            color: #1e293b;
+            box-shadow: 0 4px 0 #94a3b8;
+        }
+
+        /* --- Secondary 3D Buttons (Smaller for utility) --- */
+        .sub-btn {
+            background: #f1f5f9;
+            color: #475569;
+            box-shadow: 0 4px 0 #cbd5e1;
+            padding: 10px 15px;
+            font-size: 0.95em;
+        }
+
+        .sub-btn:hover:not(:disabled) {
+            background: #e2e8f0;
+        }
+
+        /* --- Text Area --- */
+        .content-box {
+            flex: 1; 
+            padding: 30px; /* More padding inside the text box */
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-size: 1.15em;
+            color: var(--theme-text-main);
+            outline: none;
+            overflow-y: auto; 
+            line-height: 2; /* Increased line height for better readability */
+        }
+
+        .keyword-red {
+            color: var(--theme-keyword) !important;
+            font-weight: 700 !important;
+            border-bottom: 1.5px solid #a7f3d0; 
+        }
+
+        .highlight-yellow {
+            background-color: var(--theme-highlight-bg) !important;
+            color: var(--theme-highlight-text) !important;
+            padding: 1px 4px !important;
+            border-radius: 4px !important;
+            font-weight: 600 !important;
+        }
+
+        .blank-btn {
+            cursor: pointer;
+            background: #f1f5f9 !important;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 6px;
+            margin: 0 2px;
             border-radius: 4px;
             user-select: none;
-            transition: background 0.2s, transform 0.1s;
-            display: inline-block;
-            min-width: 40px; /* Keeps the blank wide enough to click when empty */
-            text-align: center;
-            -webkit-text-fill-color: var(--blank-text); 
+            min-width: 40px;
+            height: 1.4em;
+            vertical-align: middle;
+            transition: all 0.2s;
+            border: 1px solid #cbd5e1;
         }
 
-        .blank-btn:hover {
-            background: #cce4f7;
-            transform: scale(1.05);
+        .blank-btn[data-state="0"] { color: transparent !important; }
+
+        .blank-btn[data-state="1"] { 
+            color: var(--hint-color) !important; 
+            font-weight: 500 !important;
+            -webkit-text-fill-color: var(--hint-color) !important;
         }
-        .blank-btn:active { transform: scale(0.95); } 
+
+        .blank-btn[data-state="2"] { 
+            color: var(--answer-color) !important; 
+            font-weight: 900 !important;
+            -webkit-text-fill-color: var(--answer-color) !important;
+            background: #ffffff !important; 
+            border-color: #cbd5e1;          
+        }
     </style>
 </head>
 <body>
@@ -133,15 +204,19 @@
         <h1>文言文复习助手</h1>
         
         <div class="instructions">
-            <strong>使用说明 (Instructions):</strong>
-            1. <strong>直接在下方虚线框内粘贴带有颜色的文本。</strong> (Paste rich text directly into the dashed box).<br>
-            2. 点击“生成填空”将其转换为互动练习。(Click 'Generate Blanks').<br>
-            3. 点击空白处获取提示或答案。(Click blanks for hints/answers).
+            <strong>使用说明:</strong> 1. 粘贴 Word 内容。 2. 点击 <strong>生成填空</strong> 锁定文本。<br>
+            3. 点击空格或按 <strong>Space</strong> 切换单个提示与答案，也可使用下方快捷键全局控制。
         </div>
 
         <div class="button-group">
-            <button id="generateBtn">✨ 生成填空 (Generate Blanks)</button>
-            <button id="resetBtn">🔄 清空重新开始 (Reset)</button>
+            <button id="generateBtn">✨ 生成填空</button>
+            <button id="resetBtn">🔄 清空重置</button>
+        </div>
+
+        <div class="sub-button-group">
+            <button class="sub-btn" id="allBlankBtn" disabled>👁️ 全隐藏 (All Blank)</button>
+            <button class="sub-btn" id="allHintBtn" disabled>💡 全提示 (All Hint)</button>
+            <button class="sub-btn" id="allAnswerBtn" disabled>📖 全显示 (All Answer)</button>
         </div>
 
         <div id="content" class="content-box" contenteditable="true"></div>
@@ -151,85 +226,125 @@
         document.addEventListener('DOMContentLoaded', () => {
             const generateBtn = document.getElementById('generateBtn');
             const resetBtn = document.getElementById('resetBtn');
+            const allBlankBtn = document.getElementById('allBlankBtn');
+            const allHintBtn = document.getElementById('allHintBtn');
+            const allAnswerBtn = document.getElementById('allAnswerBtn');
             const contentDiv = document.getElementById('content');
+            
+            let currentIdx = 0;
 
-            // 1. Generate Blanks
             generateBtn.addEventListener('click', () => {
-                if (!contentDiv.textContent.trim()) {
-                    alert('请先在框内粘贴文本！(Please paste text first!)');
-                    return;
-                }
+                if (!contentDiv.textContent.trim()) return;
 
-                // Get the raw HTML including Word's hidden formatting
-                let html = contentDiv.innerHTML;
-                
-                // Regex to find Chinese parentheses and everything inside them
-                html = html.replace(/（(.*?)）/g, function(match, innerHTMLContent) {
-                    // Create a temporary element to strip out Word's hidden HTML color tags
-                    let tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = innerHTMLContent;
-                    let plainText = tempDiv.textContent || tempDiv.innerText || "";
-                    plainText = plainText.trim();
+                const allElements = contentDiv.querySelectorAll('*');
+                allElements.forEach(el => {
+                    let cssText = el.style.cssText.toLowerCase();
+                    let attrColor = (el.getAttribute('color') || '').toLowerCase();
                     
-                    if (plainText !== '') {
-                        const firstChar = escapeHtml(plainText.substring(0, 1));
-                        const fullInfo = escapeHtml(plainText);
-                        // Using non-breaking spaces for a clean, clickable empty state
-                        return `（<span class="blank-btn" data-full="${fullInfo}" data-first="${firstChar}" data-state="0">&nbsp;&nbsp;&nbsp;&nbsp;</span>）`;
-                    } else {
-                        return '（）';
+                    let isRed = cssText.includes('red') || cssText.includes('rgb(255, 0, 0)') || cssText.includes('#ff0000') || attrColor.includes('red') || attrColor.includes('#ff0000');
+                    let isYellow = cssText.includes('yellow') || cssText.includes('rgb(255, 255, 0)') || cssText.includes('#ffff00');
+
+                    while (el.attributes.length > 0) {
+                        el.removeAttribute(el.attributes[0].name);
                     }
+
+                    if (isRed) el.classList.add('keyword-red');
+                    if (isYellow) el.classList.add('highlight-yellow');
+                });
+
+                let html = contentDiv.innerHTML;
+                html = html.replace(/（(.*?)）/g, (match, inner) => {
+                    let temp = document.createElement('div');
+                    temp.innerHTML = inner;
+                    let text = temp.textContent.trim();
+                    if (text) {
+                        const safeText = escapeHtml(text);
+                        const safeFirst = escapeHtml(text[0]);
+                        return `（<span class="blank-btn" data-full="${safeText}" data-first="${safeFirst}" data-state="0">　　</span>）`;
+                    }
+                    return '（）';
                 });
 
                 contentDiv.innerHTML = html;
-
-                // Disable editing so the user can click the buttons safely
                 contentDiv.setAttribute('contenteditable', 'false');
                 contentDiv.style.borderStyle = 'solid';
-                contentDiv.style.borderColor = '#ddd';
                 
+                // Reset index and enable global buttons
+                currentIdx = 0;
                 generateBtn.disabled = true;
-                generateBtn.style.opacity = '0.5';
-                generateBtn.style.cursor = 'not-allowed';
+                allBlankBtn.disabled = false;
+                allHintBtn.disabled = false;
+                allAnswerBtn.disabled = false;
             });
 
-            // 2. Reset everything
             resetBtn.addEventListener('click', () => {
                 contentDiv.innerHTML = '';
                 contentDiv.setAttribute('contenteditable', 'true');
                 contentDiv.style.borderStyle = 'dashed';
-                contentDiv.style.borderColor = '#3498db';
                 
+                // Disable global buttons on reset
                 generateBtn.disabled = false;
-                generateBtn.style.opacity = '1';
-                generateBtn.style.cursor = 'pointer';
+                allBlankBtn.disabled = true;
+                allHintBtn.disabled = true;
+                allAnswerBtn.disabled = true;
             });
 
-            // 3. Handle clicks on blanks using Event Delegation
-            contentDiv.addEventListener('click', function(e) {
-                if (e.target && e.target.classList.contains('blank-btn')) {
-                    if (contentDiv.getAttribute('contenteditable') === 'true') return;
+            // --- Global State Controllers ---
+            function setAllBlanks(targetState) {
+                const blanks = contentDiv.querySelectorAll('.blank-btn');
+                blanks.forEach(el => {
+                    el.innerHTML = ''; 
+                    if (targetState === 1) el.textContent = el.getAttribute('data-first');
+                    else if (targetState === 2) el.textContent = el.getAttribute('data-full');
+                    else el.textContent = '　　';
+                    el.setAttribute('data-state', targetState);
+                });
+                
+                // Sync Spacebar tracker
+                if (targetState === 0 || targetState === 1) {
+                    currentIdx = 0; // Spacebar starts from beginning
+                } else if (targetState === 2) {
+                    currentIdx = blanks.length; // Spacebar is finished
+                }
+            }
 
-                    let state = parseInt(e.target.getAttribute('data-state'));
-                    state++; 
-                    
-                    if (state % 3 === 1) {
-                        e.target.textContent = e.target.getAttribute('data-first');
-                    } else if (state % 3 === 2) {
-                        e.target.textContent = e.target.getAttribute('data-full');
-                    } else {
-                        // Reset to spaces when hidden
-                        e.target.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;';
-                    }
-                    e.target.setAttribute('data-state', state);
+            allBlankBtn.addEventListener('click', () => setAllBlanks(0));
+            allHintBtn.addEventListener('click', () => setAllBlanks(1));
+            allAnswerBtn.addEventListener('click', () => setAllBlanks(2));
+
+            // --- Individual Click & Keyboard Logic ---
+            contentDiv.addEventListener('click', (e) => {
+                if (e.target.classList.contains('blank-btn')) {
+                    handleBlankUpdate(e.target);
                 }
             });
 
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && contentDiv.getAttribute('contenteditable') === 'false') {
+                    e.preventDefault();
+                    const blanks = contentDiv.querySelectorAll('.blank-btn');
+                    if (currentIdx < blanks.length) {
+                        handleBlankUpdate(blanks[currentIdx]);
+                        // Move to next blank only if it cycled back to 0 (or adjust based on preference)
+                        if (blanks[currentIdx].getAttribute('data-state') === "0") {
+                            currentIdx++;
+                        }
+                    }
+                }
+            });
+
+            function handleBlankUpdate(el) {
+                let state = parseInt(el.getAttribute('data-state'));
+                state = (state + 1) % 3;
+                el.innerHTML = ''; 
+                if (state === 1) el.textContent = el.getAttribute('data-first');
+                else if (state === 2) el.textContent = el.getAttribute('data-full');
+                else el.textContent = '　　';
+                el.setAttribute('data-state', state);
+            }
+
             function escapeHtml(unsafe) {
-                return unsafe
-                     .replace(/&/g, "&amp;")
-                     .replace(/</g, "&lt;")
-                     .replace(/>/g, "&gt;");
+                return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             }
         });
     </script>
