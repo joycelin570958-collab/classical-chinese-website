@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文言文复习助手 - 颜色保留版 (Rich Text Version)</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --reset-color: #e74c3c;
+            --reset-hover: #c0392b;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --blank-bg: #e1f0fa;
+            --blank-text: #0056b3;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.8em;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.05em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        button:hover { background: var(--primary-hover); }
+        
+        #resetBtn { background: var(--reset-color); }
+        #resetBtn:hover { background: var(--reset-hover); }
+
+        .content-box {
+            min-height: 300px;
+            padding: 25px;
+            background: #fff;
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            white-space: pre-wrap; /* Keeps Word line breaks */
+            font-size: 1.15em;
+            color: #2c3e50;
+            transition: border-color 0.3s;
+            outline: none;
+        }
+
+        .content-box:focus {
+            border-color: #2980b9;
+            background: #fafcfd;
+        }
+
+        /* Shows a placeholder when the div is empty */
+        .content-box:empty:before {
+            content: "请在此处按 Ctrl+V (或 Cmd+V) 粘贴您的带有颜色的Word文档内容...";
+            color: #999;
+            pointer-events: none;
+            display: block;
+        }
+
+        /* Styling for the clickable blanks */
+        .blank-btn {
+            color: var(--blank-text);
+            cursor: pointer;
+            font-weight: 600;
+            background: var(--blank-bg);
+            padding: 2px 8px;
+            margin: 0 2px;
+            border-radius: 4px;
+            user-select: none;
+            transition: background 0.2s, transform 0.1s;
+            display: inline-block;
+            min-width: 24px;
+            text-align: center;
+            /* Ensures the button ignores parent text colors so it stays blue */
+            -webkit-text-fill-color: var(--blank-text); 
+        }
+
+        .blank-btn:hover {
+            background: #cce4f7;
+            transform: scale(1.05);
+        }
+        .blank-btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>文言文复习助手</h1>
+        
+        <div class="instructions">
+            <strong>使用说明 (Instructions):</strong>
+            1. <strong>直接在下方虚线框内粘贴带有颜色的文本。</strong> (Paste rich text directly into the dashed box).<br>
+            2. 点击“生成填空”将其转换为互动练习。(Click 'Generate Blanks').<br>
+            3. 点击空白处获取提示或答案。(Click blanks for hints/answers).
+        </div>
+
+        <div class="button-group">
+            <button id="generateBtn">✨ 生成填空 (Generate Blanks)</button>
+            <button id="resetBtn">🔄 清空重新开始 (Reset)</button>
+        </div>
+
+        <div id="content" class="content-box" contenteditable="true"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateBtn = document.getElementById('generateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const contentDiv = document.getElementById('content');
+
+            // 1. Generate Blanks without destroying HTML tags
+            generateBtn.addEventListener('click', () => {
+                if (!contentDiv.textContent.trim()) {
+                    alert('请先在框内粘贴文本！(Please paste text first!)');
+                    return;
+                }
+
+                // Process the DOM nodes recursively to keep colors
+                processDOMNodes(contentDiv);
+
+                // Disable editing so the user can click the buttons safely
+                contentDiv.setAttribute('contenteditable', 'false');
+                contentDiv.style.borderStyle = 'solid';
+                contentDiv.style.borderColor = '#ddd';
+                
+                generateBtn.disabled = true;
+                generateBtn.style.opacity = '0.5';
+                generateBtn.style.cursor = 'not-allowed';
+            });
+
+            // 2. Reset everything
+            resetBtn.addEventListener('click', () => {
+                contentDiv.innerHTML = '';
+                contentDiv.setAttribute('contenteditable', 'true');
+                contentDiv.style.borderStyle = 'dashed';
+                contentDiv.style.borderColor = '#3498db';
+                
+                generateBtn.disabled = false;
+                generateBtn.style.opacity = '1';
+                generateBtn.style.cursor = 'pointer';
+            });
+
+            // 3. Recursive function to find text and replace （） while keeping Word span tags
+            function processDOMNodes(node) {
+                // If it's a Text node, apply our regex
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const text = node.nodeValue;
+                    const regex = /（([^）]*)）/g;
+                    
+                    if (regex.test(text)) {
+                        const tempDiv = document.createElement('div');
+                        let lastIndex = 0;
+                        let match;
+                        let htmlResult = '';
+                        
+                        regex.lastIndex = 0; // Reset regex state
+                        
+                        while ((match = regex.exec(text)) !== null) {
+                            htmlResult += escapeHtml(text.substring(lastIndex, match.index));
+                            const info = match[1].trim();
+                            
+                            if (info !== '') {
+                                const firstChar = escapeHtml(info.substring(0, 1));
+                                const fullInfo = escapeHtml(info);
+                                htmlResult += `（<span class="blank-btn" data-full="${fullInfo}" data-first="${firstChar}" data-state="0">　　</span>）`;
+                            } else {
+                                htmlResult += '（）';
+                            }
+                            lastIndex = regex.lastIndex;
+                        }
+                        
+                        if (lastIndex < text.length) {
+                            htmlResult += escapeHtml(text.substring(lastIndex));
+                        }
+                        
+                        tempDiv.innerHTML = htmlResult;
+                        
+                        // Replace the old plain text node with our new HTML nodes
+                        const fragment = document.createDocumentFragment();
+                        while (tempDiv.firstChild) {
+                            fragment.appendChild(tempDiv.firstChild);
+                        }
+                        node.parentNode.replaceChild(fragment, node);
+                    }
+                } 
+                // If it's an Element node, go deeper (unless it's one of our buttons)
+                else if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.classList && node.classList.contains('blank-btn')) return;
+                    
+                    // Convert to array to safely iterate while we might be modifying the DOM inside
+                    Array.from(node.childNodes).forEach(processDOMNodes);
+                }
+            }
+
+            // 4. Handle clicks on blanks using Event Delegation
+            contentDiv.addEventListener('click', function(e) {
+                // Check if the clicked element is a blank button
+                if (e.target && e.target.classList.contains('blank-btn')) {
+                    // Only allow clicking if we are in "quiz mode" (not editable)
+                    if (contentDiv.getAttribute('contenteditable') === 'true') return;
+
+                    let state = parseInt(e.target.getAttribute('data-state'));
+                    state++; 
+                    
+                    if (state % 3 === 1) {
+                        e.target.textContent = e.target.getAttribute('data-first');
+                    } else if (state % 3 === 2) {
+                        e.target.textContent = e.target.getAttribute('data-full');
+                    } else {
+                        e.target.textContent = '　　';
+                    }
+                    e.target.setAttribute('data-state', state);
+                }
+            });
+
+            // Utility to prevent formatting breaks
+            function escapeHtml(unsafe) {
+                return unsafe
+                     .replace(/&/g, "&amp;")
+                     .replace(/</g, "&lt;")
+                     .replace(/>/g, "&gt;");
+            }
+        });
+    </script>
+</body>
+</html>
